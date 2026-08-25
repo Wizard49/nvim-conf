@@ -35,4 +35,7 @@ return {
   {
     "junegunn/fzf.vim", name="fzf"
   },
+  {
+    "sphamba/smear-cursor.nvim", name="smear"
+  },
 }

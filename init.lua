@@ -35,7 +35,6 @@ require("nvim-treesitter").setup({ --treesitter
 require("transparent").setup()
 require("toggleterm").setup()
 
-
 local wilder = require('wilder')
 wilder.setup({modes = {':', '/', '?'}})
 
