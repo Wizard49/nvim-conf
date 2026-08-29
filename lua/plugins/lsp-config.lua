@@ -16,6 +16,10 @@ return {
     config = function()
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      vim.lsp.config("textlab", {
+          capabilities = capabilities,
+      })
+
       vim.lsp.config("nil", {
           capabilities = capabilities,
           flake = {autoarchive = true},

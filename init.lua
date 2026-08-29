@@ -28,7 +28,7 @@ vim.opt.rtp:prepend(lazypath)
 --require("lazy").setup(plugins, opts) --lazy
 require("lazy").setup("plugins")
 require("nvim-treesitter").setup({ --treesitter
-  ensure_installed = {"lua", "javascript"},
+  ensure_installed = {"lua", "javascript","cpp"},
   highlight = { enable = true },
   indent = { enable = true }
 })
@@ -60,6 +60,26 @@ vim.keymap.set('n', '<leader>s', 'w<CR>')
 vim.keymap.set('n', '<leader>r', ':lua vim.lsp.buf.rename()<CR>')
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<C-f>', '<cmd>fzf<CR>')
+
+--rustaceansvim keybinds default
+local bufnr = vim.api.nvim_get_current_buf()
+vim.keymap.set(
+  "n",
+  "<leader>a",
+  function()
+    vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
+    -- or vim.lsp.buf.codeAction() if you don't want grouping.
+  end,
+  { silent = true, buffer = bufnr }
+)
+vim.keymap.set(
+  "n",
+  "K",  -- Override Neovim's built-in hover keymap with rustaceanvim's hover actions
+  function()
+    vim.cmd.RustLsp({'hover', 'actions'})
+  end,
+  { silent = true, buffer = bufnr }
+)
 
 --Clipboard
 vim.opt.clipboard = "unnamedplus"

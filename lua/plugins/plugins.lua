@@ -35,7 +35,16 @@ return {
   {
     "junegunn/fzf.vim", name="fzf"
   },
+  -- {
+  --   "sphamba/smear-cursor.nvim", name="smear"
+  -- },
   {
-    "sphamba/smear-cursor.nvim", name="smear"
+    "lervag/vimtex", name="vimtex"
+  },
+  {
+    "emakman/neovim-latex-previewer", name="texpreview"
+  },
+  {
+    "mrcjkb/rustaceanvim", version = "^9", lazy=false
   },
 }
