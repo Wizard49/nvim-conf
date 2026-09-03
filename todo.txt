@@ -1,0 +1,75 @@
+Neovim declarative Nix setup
+============================
+
+[ ] Add the required tools to ONE of the following Nix configuration locations.
+
+    NixOS (configuration.nix):
+
+      environment.systemPackages = with pkgs; [
+        clang-tools  # clangd: C/C++ completion, diagnostics, and code actions
+        tree-sitter  # CLI used to build Neovim Tree-sitter parsers
+      ];
+
+    Home Manager (home.nix), instead of the NixOS block above:
+
+      home.packages = with pkgs; [
+        clang-tools
+        tree-sitter
+      ];
+
+[ ] Rebuild the configuration using the command appropriate for this machine.
+
+    NixOS:
+      sudo nixos-rebuild switch
+
+    Flake-based NixOS:
+      sudo nixos-rebuild switch --flake /path/to/flake#hostname
+
+    Home Manager:
+      home-manager switch
+
+    Flake-based Home Manager:
+      home-manager switch --flake /path/to/flake#username@hostname
+
+[ ] Start a new shell, then verify both declarative packages are available:
+
+      command -v clangd
+      clangd --version
+      command -v tree-sitter
+      tree-sitter --version
+
+[ ] Only after the Nix-provided tree-sitter command works, remove the temporary
+    npm installation made during Neovim setup:
+
+      npm uninstall --global --prefix ~/.local tree-sitter-cli
+
+[ ] Confirm the temporary npm executable is gone and the Nix executable remains:
+
+      command -v tree-sitter
+
+[ ] Open Neovim and run these health checks:
+
+      :checkhealth vimtex
+      :checkhealth nvim-treesitter
+      :LspInfo
+
+[ ] Test C/C++ support by opening a .c or .cpp project. `:LspInfo` should show
+    clangd attached; completion should open with Ctrl-Space and code actions with
+    <leader>ca.
+
+[ ] Test LaTeX support by opening a .tex document:
+
+      <leader>lc  toggle continuous compilation
+      <leader>lv  open the compiled PDF
+      <leader>ll  show compiler errors
+      <leader>lp  preview the equation under the cursor
+
+Notes
+-----
+
+- The temporary `nix profile` clang-tools entry has already been removed.
+- latexmk, pdflatex, lualatex, and xelatex were already installed through the
+  existing Nix configuration; do not add duplicates unless their current source
+  is intentionally being replaced.
+- Neovim plugins and most language servers are currently managed by lazy.nvim
+  and Mason under Neovim's user data directory, not by `nix profile`.

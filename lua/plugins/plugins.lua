@@ -2,7 +2,21 @@ return {
   { "sainnhe/everforest", name="everforest", priority=999 },
   { 'nvim-telescope/telescope.nvim', tag='0.1.6', dependencies = { 'nvim-lua/plenary.nvim' } },
   { "nvim-treesitter/nvim-treesitter", build= ":TSUpdate" },
-  { "xiyaowong/transparent.nvim", name="transparent" },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      require("nvim-autopairs").setup({ check_ts = true })
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+      require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
+    end,
+  },
+  {
+    "aznhe21/actions-preview.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    opts = {},
+  },
+  -- { "xiyaowong/transparent.nvim", name="transparent" },
   { "gelguy/wilder.nvim", name = "wilder" },
   { "nvim-neo-tree/neo-tree.nvim", branch= "v3.x",
       dependencies = {
@@ -33,18 +47,46 @@ return {
     end,
   },
   {
-    "junegunn/fzf.vim", name="fzf"
+    "lervag/vimtex",
+    name = "vimtex",
+    lazy = false,
+    init = function()
+      vim.g.vimtex_compiler_method = "latexmk"
+      vim.g.vimtex_compiler_latexmk = {
+        options = { "-verbose", "-file-line-error", "-synctex=1", "-interaction=nonstopmode" },
+      }
+      -- Evince opens in its own window and automatically reloads the PDF after
+      -- every successful latexmk build.
+      vim.g.vimtex_view_method = "general"
+      vim.g.vimtex_view_general_viewer = "evince"
+      vim.g.vimtex_view_automatic = 1
+      vim.g.vimtex_quickfix_mode = 0
+    end,
   },
-  -- {
-  --   "sphamba/smear-cursor.nvim", name="smear"
-  -- },
   {
-    "lervag/vimtex", name="vimtex"
+    "jbyuki/nabla.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    ft = { "tex", "plaintex" },
+    config = function()
+      local function setup_buffer(bufnr)
+        require("nabla").enable_virt({ autogen = true, silent = true })
+        -- Render the LaTeX equation under the cursor in a floating preview.
+        vim.keymap.set("n", "<leader>lp", require("nabla").popup, {
+          buffer = bufnr,
+          desc = "Preview equation under cursor",
+        })
+      end
+
+      setup_buffer(vim.api.nvim_get_current_buf())
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "tex", "plaintex" },
+        callback = function(args)
+          setup_buffer(args.buf)
+        end,
+      })
+    end,
   },
   {
-    "emakman/neovim-latex-previewer", name="texpreview"
-  },
-  {
-    "mrcjkb/rustaceanvim", version = "^9", lazy=false
+    "nvim-tree/nvim-web-devicons", lazy = true,
   },
 }

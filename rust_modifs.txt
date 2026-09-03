@@ -1,0 +1,43 @@
+Rust/Neovim configuration modifications
+=======================================
+
+init.lua
+--------
+- Removed the global rustaceanvim <leader>a code-action keymap.
+- Removed the global rustaceanvim K hover-actions keymap.
+- These mappings are now created by rustaceanvim's on_attach callback so they
+  are buffer-local and only apply after rust-analyzer attaches to a Rust buffer.
+
+lua/plugins/lsp-config.lua
+--------------------------
+- Removed the generic vim.lsp.config("rust_analyzer", ...) configuration.
+- Removed "rust_analyzer" from vim.lsp.enable(...).
+- Added a comment documenting that rustaceanvim is the sole owner of
+  rust-analyzer, preventing duplicate LSP clients and conflicting settings.
+
+lua/plugins/rustaceansvim.lua
+------------------------------
+- Created LSP capabilities by merging rustaceanvim's custom client
+  capabilities with cmp_nvim_lsp completion capabilities. This preserves
+  rustaceanvim-specific functionality while keeping nvim-cmp completion.
+- Passed the merged capabilities to rustaceanvim's server configuration.
+- Added a buffer-local <leader>a mapping in on_attach for grouped Rust code
+  actions via :RustLsp codeAction.
+- Added a buffer-local K mapping in on_attach for Rust hover actions via
+  :RustLsp hover actions.
+- Changed the rust-analyzer Clippy setting from the older checkOnSave table to
+  the current check table, with command = "clippy".
+- Disabled the rust-analyzer "inactive-code" diagnostic. Neovim renders that
+  diagnostic as unnecessary/grey text, so disabling it prevents code blocks
+  around cfg conditions or macros from being greyed out.
+
+Verification
+------------
+- Parsed init.lua, lua/plugins/lsp-config.lua, and
+  lua/plugins/rustaceansvim.lua with Neovim to verify their Lua syntax.
+- Checked the installed rust-analyzer 2026-06-15 configuration schema to
+  confirm rust-analyzer.check.command and rust-analyzer.diagnostics.disabled
+  are supported settings.
+- A full headless startup was attempted, but unrelated Mason filesystem
+  permission errors occurred because the verification environment restricts
+  writes outside the Neovim configuration workspace.

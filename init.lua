@@ -28,12 +28,16 @@ vim.opt.rtp:prepend(lazypath)
 --require("lazy").setup(plugins, opts) --lazy
 require("lazy").setup("plugins")
 require("nvim-treesitter").setup({ --treesitter
-  ensure_installed = {"lua", "javascript","cpp"},
-  highlight = { enable = true },
+  ensure_installed = { "lua", "javascript", "typescript", "python", "cpp", "rust", "nix", "latex", "bibtex" },
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
   indent = { enable = true }
 })
 require("transparent").setup()
 require("toggleterm").setup()
+
 
 local wilder = require('wilder')
 wilder.setup({modes = {':', '/', '?'}})
@@ -42,7 +46,7 @@ wilder.setup({modes = {':', '/', '?'}})
 vim.cmd.colorscheme("everforest")
 
 --Neo-tree transparent
-vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE", ctermbg = "NONE" })
+vim.api.nvim_set_hl(1, "NeoTreeNormal", { bg = "NONE", ctermbg = "NONE" })
 vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "NONE", ctermbg = "NONE" })
 vim.api.nvim_set_hl(0, "NeoTreeEndOfBuffer", { bg = "NONE", ctermbg = "NONE" })
 vim.api.nvim_set_hl(0, "NeoTreeSignColumn", { bg = "NONE", ctermbg = "NONE" })
@@ -57,29 +61,9 @@ vim.keymap.set('n', '<leader>w', ':SudaWrite<CR>')
 vim.keymap.set('n', '<leader>q', ':q!<CR>')
 vim.keymap.set('n', '<leader>wq', ':wq<CR>')
 vim.keymap.set('n', '<leader>s', 'w<CR>')
-vim.keymap.set('n', '<leader>r', ':lua vim.lsp.buf.rename()<CR>')
+vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { desc = "Rename symbol" })
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-vim.keymap.set('n', '<C-f>', '<cmd>fzf<CR>')
-
---rustaceansvim keybinds default
-local bufnr = vim.api.nvim_get_current_buf()
-vim.keymap.set(
-  "n",
-  "<leader>a",
-  function()
-    vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
-    -- or vim.lsp.buf.codeAction() if you don't want grouping.
-  end,
-  { silent = true, buffer = bufnr }
-)
-vim.keymap.set(
-  "n",
-  "K",  -- Override Neovim's built-in hover keymap with rustaceanvim's hover actions
-  function()
-    vim.cmd.RustLsp({'hover', 'actions'})
-  end,
-  { silent = true, buffer = bufnr }
-)
+-- vim.keymap.set('n', '<C-f>', '<cmd>fzf<CR>')
 
 --Clipboard
 vim.opt.clipboard = "unnamedplus"
