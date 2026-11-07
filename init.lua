@@ -1,60 +1,51 @@
-vim.cmd("set expandtab")
-vim.cmd("set tabstop=2")
-vim.cmd("set softtabstop=2")
-vim.cmd("set shiftwidth=2")
-vim.g.mapleader = " " 
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+vim.opt.expandtab = true
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-vim.fn.system({
-  "git",
-  "clone",
-  "--filter=blob:none",
-  "https://github.com/folke/lazy.nvim.git",
-  "--branch=stable",
-  lazypath,
-})
-end 
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
 
 vim.opt.rtp:prepend(lazypath)
 
---vim.opt.swapfile = false 
-  vim.opt.directory = vim.fn.stdpath("state") .. "/swap//"
+vim.opt.directory = vim.fn.stdpath("state") .. "/swap//"
 
---local opts = {}
-
---Lua import setups--
-
---require("lazy").setup(plugins, opts) --lazy
-require("lazy").setup("plugins")
-require("nvim-treesitter").setup({ --treesitter
-  ensure_installed = { "lua", "javascript", "typescript", "python", "cpp", "rust", "nix", "latex", "bibtex" },
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-  indent = { enable = true }
+require("lazy").setup("plugins", {
+  checker = { enabled = true, notify = false },
+  change_detection = { notify = false },
 })
-require("transparent").setup()
-require("toggleterm").setup()
 
-
-local wilder = require('wilder')
-wilder.setup({modes = {':', '/', '?'}})
+vim.filetype.add({
+  extension = {
+    c0 = "c",
+  },
+})
 
 --Colorscheme--
 vim.cmd.colorscheme("everforest")
 
 --Neo-tree transparent
-vim.api.nvim_set_hl(1, "NeoTreeNormal", { bg = "NONE", ctermbg = "NONE" })
+vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE", ctermbg = "NONE" })
 vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "NONE", ctermbg = "NONE" })
 vim.api.nvim_set_hl(0, "NeoTreeEndOfBuffer", { bg = "NONE", ctermbg = "NONE" })
 vim.api.nvim_set_hl(0, "NeoTreeSignColumn", { bg = "NONE", ctermbg = "NONE" })
 
 --Vim keybinds--
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<C-p>', builtin.find_files, {})
-vim.keymap.set('n', '<C-l>', builtin.live_grep, {})
+vim.keymap.set('n', '<C-p>', '<cmd>Telescope find_files<cr>')
+vim.keymap.set('n', '<C-l>', '<cmd>Telescope live_grep<cr>')
 vim.keymap.set('n', '<C-n>', ':Neotree toggle filesystem reveal float<CR>')
 vim.keymap.set('n', '<C-t>', ':ToggleTerm toggle size=17 direction=horizontal dir=.<CR>')
 vim.keymap.set('n', '<leader>w', ':SudaWrite<CR>')

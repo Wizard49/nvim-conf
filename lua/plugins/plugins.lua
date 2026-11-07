@@ -1,10 +1,31 @@
 return {
   { "sainnhe/everforest", name="everforest", priority=999 },
   { 'nvim-telescope/telescope.nvim', tag='0.1.6', dependencies = { 'nvim-lua/plenary.nvim' } },
-  { "nvim-treesitter/nvim-treesitter", build= ":TSUpdate" },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    build = ":TSUpdate",
+    config = function()
+      local parsers = {
+        "angular", "bash", "bibtex", "c", "cmake", "cpp", "css", "go",
+        "html", "javascript", "json", "latex", "lua", "markdown",
+        "markdown_inline", "nix", "python", "rust", "terraform",
+        "typescript", "vim", "vimdoc", "yaml",
+      }
+
+      require("nvim-treesitter").install(parsers)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = parsers,
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
+      })
+    end,
+  },
   {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
+    dependencies = { "hrsh7th/nvim-cmp" },
     config = function()
       require("nvim-autopairs").setup({ check_ts = true })
       local cmp_autopairs = require("nvim-autopairs.completion.cmp")
@@ -17,7 +38,6 @@ return {
     opts = {},
   },
   -- { "xiyaowong/transparent.nvim", name="transparent" },
-  { "gelguy/wilder.nvim", name = "wilder" },
   { "nvim-neo-tree/neo-tree.nvim", branch= "v3.x",
       dependencies = {
         "nvim-lua/plenary.nvim",
@@ -25,9 +45,7 @@ return {
         "MunifTanjim/nui.nvim",
       }
   },
-  {
-    "akinsho/toggleterm.nvim",config = true
-  },
+  { "akinsho/toggleterm.nvim", opts = {} },
   {
     "lambdalisue/suda.vim", name="suda"
   },
@@ -88,5 +106,12 @@ return {
   },
   {
     "nvim-tree/nvim-web-devicons", lazy = true,
+  },
+  {
+    "gelguy/wilder.nvim",
+    name = "wilder",
+    config = function()
+      require("wilder").setup({ modes = { ":", "/", "?" } })
+    end,
   },
 }
